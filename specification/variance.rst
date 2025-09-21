@@ -5,8 +5,8 @@ Variance
 The ``senbonzakura`` language really likes the subtyping rules.
 The syntax in language as follows::
 
-	data Animal[-T]:
-		attr: T
+   data Animal[-T]:
+      attr: T
 
 There are three kinds of variance:
 - ``-T`` means contravariance, which allows using the ``T`` itself and it's supertypes.
