@@ -27,8 +27,8 @@ When we're talking about "to-the-top", it oftens means supertype.
 Let's imagine a simple hierarchy::
 
 	Creature
-  		└──Animal
-       		└──Cat
-	       		└──Kitty
+           └──Animal
+                  └──Cat
+                      └──Kitty
 
 What is going on with the python typesystem.. I can't live with it.
