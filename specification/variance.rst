@@ -1,9 +1,13 @@
+========
+Variance
+========
+
 The ``senbonzakura`` language really likes the subtyping rules.
-The syntax in language as follows:
-```senbonzakura
-data Animal[-T]:
-	attr: T
-```
+The syntax in language as follows::
+
+	data Animal[-T]:
+		attr: T
+
 There are three kinds of variance:
 - ``-T`` means contravariance, which allows using the ``T`` itself and it's supertypes.
 - ``T`` means invariance, no subtypes or supertypes are allowed.
@@ -20,12 +24,11 @@ The term subtyping has a two directions, one "to-the-down" and the second one is
 When we're talking about "to-the-top", it oftens means supertype.
 
 
-Let's imagine a simple hierarchy.
-```
-Creature
-  └──Animal
-       └──Cat
-	       └──Kitty
-```
+Let's imagine a simple hierarchy::
+
+	Creature
+  		└──Animal
+       		└──Cat
+	       		└──Kitty
 
 What is going on with the python typesystem.. I can't live with it.
