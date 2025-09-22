@@ -31,4 +31,9 @@ Let's imagine a simple hierarchy::
                   └──Cat
                       └──Kitty
 
-What is going on with the python typesystem.. I can't live with it.
+Read that as: ``Kitty <: Cat <: Animal <: Creature``, where's the ``<:`` means "is a subtype of"::
+
+   data Box[+T]:  # A covarian over T
+      value: T
+
+So, if ``Cat <: Animal``, then ``Box[Cat] <: Box[Animal] <: Box[Creature]``.
