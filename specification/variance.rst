@@ -31,10 +31,7 @@ Let's imagine a simple hierarchy::
                   └──Cat
                       └──Kitty
 
-Read that as: ``Kitty <: Cat <: Animal <: Creature``, where's the ``<:`` means "is a subtype of".
-
-
-..code-block:: python
+Read that as: ``Kitty <: Cat <: Animal <: Creature``, where's the ``<:`` means "is a subtype of"::
 
    data Box[+T]:  # A covarian over T
       value: T
