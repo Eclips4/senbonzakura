@@ -1,0 +1,20 @@
+data Point:
+    x: Int
+    y: Int
+
+impl Point:
+    def sum(self: Point) -> Int:
+        return self.x + self.y
+
+    def scale(self: Point, factor: Int) -> Point:
+        return Point(self.x * factor, self.y * factor)
+
+impl Add[Point, Point, Point]:
+    def add(self: Point, other: Point) -> Point:
+        return Point(self.x + other.x, self.y + other.y)
+
+let p: Point = Point(3, 4)
+let s: Int = p.sum()
+let scaled: Point = p.scale(2)
+let added: Point = p + Point(1, 1)
+print("methods work!")

@@ -1,0 +1,16 @@
+data Vec2:
+    x: Int
+    y: Int
+
+impl Add[Vec2]:
+    def add(self: Vec2, other: Vec2) -> Vec2:
+        return Vec2(self.x + other.x, self.y + other.y)
+
+impl Eq[Vec2]:
+    def eq(self: Vec2, other: Vec2) -> Bool:
+        return self.x == other.x and self.y == other.y
+
+let a: Vec2 = Vec2(1, 2)
+let b: Vec2 = Vec2(3, 4)
+let c: Vec2 = a + b
+print("hello senbonzakura typeclasses")

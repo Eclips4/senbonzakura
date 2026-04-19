@@ -1,0 +1,6 @@
+import mathlib
+from os.path import join
+
+let result = mathlib.add(1, 2)
+let p = join("hello", "world")
+print(p)

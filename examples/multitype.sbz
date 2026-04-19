@@ -1,0 +1,20 @@
+data Vec2:
+    x: Int
+    y: Int
+
+data Vec3:
+    x: Int
+    y: Int
+    z: Int
+
+impl Add[Vec2, Vec2, Vec2]:
+    def add(self: Vec2, other: Vec2) -> Vec2:
+        return Vec2(self.x + other.x, self.y + other.y)
+
+impl Eq[Vec2, Vec2, Bool]:
+    def eq(self: Vec2, other: Vec2) -> Bool:
+        return self.x == other.x and self.y == other.y
+
+let a: Vec2 = Vec2(1, 2) + Vec2(3, 4)
+let same: Bool = Vec2(1, 2) == Vec2(1, 2)
+print("multi-param typeclasses work")

@@ -1,0 +1,10 @@
+name = "SenbonzakuraCore"
+version = "0.1.0"
+defaultTargets = ["senbonzakuracore"]
+
+[[lean_lib]]
+name = "SenbonzakuraCore"
+
+[[lean_exe]]
+name = "senbonzakuracore"
+root = "Main"

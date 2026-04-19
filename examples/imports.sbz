@@ -1,0 +1,6 @@
+import os
+from os.path import join
+
+let cwd = os.getcwd()
+let p = join("hello", "world")
+print(p)

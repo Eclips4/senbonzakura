@@ -1,0 +1,10 @@
+[workspace]
+members = [".", "crates/senbonzakura-core", "crates/senbonzakura-lsp"]
+
+[package]
+name = "senbonzakura"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+senbonzakura-core = { path = "crates/senbonzakura-core" }

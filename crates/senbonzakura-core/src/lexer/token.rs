@@ -1,0 +1,150 @@
+use std::fmt;
+
+use crate::source::Span;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TokenKind {
+    IntLit,
+    FloatLit,
+    StringLit,
+
+    Ident,
+
+    KwData,
+    KwDef,
+    KwLet,
+    KwMut,
+    KwIf,
+    KwElif,
+    KwElse,
+    KwReturn,
+    KwImport,
+    KwFrom,
+    KwAs,
+    KwTrue,
+    KwFalse,
+    KwNone,
+    KwAnd,
+    KwOr,
+    KwNot,
+    KwFor,
+    KwIn,
+    KwTypeclass,
+    KwImpl,
+
+    Plus,
+    Minus,
+    Star,
+    Slash,
+    Eq,
+    EqEq,
+    BangEq,
+    Lt,
+    Gt,
+    LtEq,
+    GtEq,
+    Arrow,
+
+    LParen,
+    RParen,
+    LBracket,
+    RBracket,
+    Colon,
+    Comma,
+    Dot,
+
+    Newline,
+    Indent,
+    Dedent,
+
+    Eof,
+}
+
+impl fmt::Display for TokenKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TokenKind::IntLit => write!(f, "integer"),
+            TokenKind::FloatLit => write!(f, "float"),
+            TokenKind::StringLit => write!(f, "string"),
+            TokenKind::Ident => write!(f, "identifier"),
+            TokenKind::KwData => write!(f, "'data'"),
+            TokenKind::KwDef => write!(f, "'def'"),
+            TokenKind::KwLet => write!(f, "'let'"),
+            TokenKind::KwMut => write!(f, "'mut'"),
+            TokenKind::KwIf => write!(f, "'if'"),
+            TokenKind::KwElif => write!(f, "'elif'"),
+            TokenKind::KwElse => write!(f, "'else'"),
+            TokenKind::KwReturn => write!(f, "'return'"),
+            TokenKind::KwImport => write!(f, "'import'"),
+            TokenKind::KwFrom => write!(f, "'from'"),
+            TokenKind::KwAs => write!(f, "'as'"),
+            TokenKind::KwTrue => write!(f, "'True'"),
+            TokenKind::KwFalse => write!(f, "'False'"),
+            TokenKind::KwNone => write!(f, "'None'"),
+            TokenKind::KwAnd => write!(f, "'and'"),
+            TokenKind::KwOr => write!(f, "'or'"),
+            TokenKind::KwNot => write!(f, "'not'"),
+            TokenKind::KwFor => write!(f, "'for'"),
+            TokenKind::KwIn => write!(f, "'in'"),
+            TokenKind::KwTypeclass => write!(f, "'typeclass'"),
+            TokenKind::KwImpl => write!(f, "'impl'"),
+            TokenKind::Plus => write!(f, "'+'"),
+            TokenKind::Minus => write!(f, "'-'"),
+            TokenKind::Star => write!(f, "'*'"),
+            TokenKind::Slash => write!(f, "'/'"),
+            TokenKind::Eq => write!(f, "'='"),
+            TokenKind::EqEq => write!(f, "'=='"),
+            TokenKind::BangEq => write!(f, "'!='"),
+            TokenKind::Lt => write!(f, "'<'"),
+            TokenKind::Gt => write!(f, "'>'"),
+            TokenKind::LtEq => write!(f, "'<='"),
+            TokenKind::GtEq => write!(f, "'>='"),
+            TokenKind::Arrow => write!(f, "'->'"),
+            TokenKind::LParen => write!(f, "'('"),
+            TokenKind::RParen => write!(f, "')'"),
+            TokenKind::LBracket => write!(f, "'['"),
+            TokenKind::RBracket => write!(f, "']'"),
+            TokenKind::Colon => write!(f, "':'"),
+            TokenKind::Comma => write!(f, "','"),
+            TokenKind::Dot => write!(f, "'.'"),
+            TokenKind::Newline => write!(f, "newline"),
+            TokenKind::Indent => write!(f, "indent"),
+            TokenKind::Dedent => write!(f, "dedent"),
+            TokenKind::Eof => write!(f, "end of file"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Token {
+    pub kind: TokenKind,
+    pub text: String,
+    pub span: Span,
+}
+
+pub fn lookup_keyword(text: &str) -> Option<TokenKind> {
+    match text {
+        "data" => Some(TokenKind::KwData),
+        "def" => Some(TokenKind::KwDef),
+        "let" => Some(TokenKind::KwLet),
+        "mut" => Some(TokenKind::KwMut),
+        "if" => Some(TokenKind::KwIf),
+        "elif" => Some(TokenKind::KwElif),
+        "else" => Some(TokenKind::KwElse),
+        "return" => Some(TokenKind::KwReturn),
+        "import" => Some(TokenKind::KwImport),
+        "from" => Some(TokenKind::KwFrom),
+        "as" => Some(TokenKind::KwAs),
+        "True" => Some(TokenKind::KwTrue),
+        "False" => Some(TokenKind::KwFalse),
+        "None" => Some(TokenKind::KwNone),
+        "and" => Some(TokenKind::KwAnd),
+        "or" => Some(TokenKind::KwOr),
+        "not" => Some(TokenKind::KwNot),
+        "for" => Some(TokenKind::KwFor),
+        "in" => Some(TokenKind::KwIn),
+        "typeclass" => Some(TokenKind::KwTypeclass),
+        "impl" => Some(TokenKind::KwImpl),
+        _ => None,
+    }
+}

@@ -1,0 +1,37 @@
+# A simple todo list manager
+
+import json
+from os.path import exists
+
+data Todo:
+    title: Str
+    done: Bool
+
+def make_todo(title: Str) -> Todo:
+    return Todo(title, False)
+
+def show_todo(todo: Todo, index: Int) -> Str:
+    if todo.done == True:
+        return "[x] " + todo.title
+    else:
+        return "[ ] " + todo.title
+
+def main():
+    let t1: Todo = make_todo("Learn senbonzakura")
+    let t2: Todo = make_todo("Build a compiler")
+    let t3: Todo = make_todo("Prove it sound")
+    let t4: Todo = make_todo("Write an LSP")
+
+    # Mark some as done
+    let d1: Todo = Todo(t1.title, True)
+    let d3: Todo = Todo(t3.title, True)
+    let d4: Todo = Todo(t4.title, True)
+
+    print("=== Todo List ===")
+    print(show_todo(d1, 1))
+    print(show_todo(t2, 2))
+    print(show_todo(d3, 3))
+    print(show_todo(d4, 4))
+    print("=================")
+
+main()

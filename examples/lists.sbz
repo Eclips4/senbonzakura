@@ -1,0 +1,13 @@
+let nums: List[Int] = [1, 2, 3, 4, 5]
+let first: Int = nums[0]
+
+let names: List[Str] = ["alice", "bob", "charlie"]
+
+for name in names:
+    print(name)
+
+for i in range(5):
+    print(i)
+
+let total: Int = len(nums)
+print(total)
