@@ -1,0 +1,17 @@
+{
+  "name": "tree-sitter-senbonzakura",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for the senbonzakura language",
+  "main": "bindings/node",
+  "keywords": ["tree-sitter", "parser", "senbonzakura"],
+  "dependencies": {
+    "nan": "^2.18.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.22.0"
+  },
+  "scripts": {
+    "build": "tree-sitter generate",
+    "test": "tree-sitter test"
+  }
+}

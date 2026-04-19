@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "version": "0.1.0",
+    "links": {},
+    "authors": []
+  },
+  "grammars": [
+    {
+      "name": "senbonzakura",
+      "path": ".",
+      "scope": "source.senbonzakura",
+      "file-types": ["sbz"]
+    }
+  ]
+}

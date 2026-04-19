@@ -1,0 +1,13 @@
+data Point:
+    x: Int
+    y: Int
+
+def add(a: Int, b: Int) -> Int:
+    return a + b
+
+let p: Point = Point(3, 4)
+let sum: Int = add(p.x, p.y)
+print("hello senbonzakura")
+
+if sum == 7:
+    print("Meow!")
