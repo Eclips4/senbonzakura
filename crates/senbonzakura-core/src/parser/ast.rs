@@ -114,7 +114,6 @@ pub struct MethodSig {
     pub span: Span,
 }
 
-/// `impl Point:` (inherent methods) or `impl Add[Vec2, Vec2, Vec2]:` (typeclass instance)
 #[derive(Debug, Clone)]
 pub struct ImplBlock {
     pub kind: ImplKind,
@@ -124,9 +123,7 @@ pub struct ImplBlock {
 
 #[derive(Debug, Clone)]
 pub enum ImplKind {
-    /// `impl Point:` — inherent methods on a type
     Inherent { target_type: String },
-    /// `impl Add[Vec2, Vec2, Vec2]:` — typeclass instance
     Instance { typeclass_name: String, type_args: Vec<TypeExpr> },
 }
 
@@ -146,12 +143,10 @@ pub struct ImportStmt {
 
 #[derive(Debug, Clone)]
 pub enum ImportKind {
-    /// `import math` or `import math as m`
     Simple {
         module_path: Vec<String>,
         alias: Option<String>,
     },
-    /// `from math import add, sub` or `from os.path import join as j`
     From {
         module_path: Vec<String>,
         names: Vec<ImportName>,

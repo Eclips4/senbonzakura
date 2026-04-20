@@ -165,22 +165,12 @@ impl TypeChecker {
     }
 
     fn check_let_binding(&mut self, binding: &LetBinding) -> crate::errors::Result<()> {
-        let value_type = self.synth(&binding.value)?;
-
-        if let Some(ann) = &binding.type_annotation {
-            let expected = self.resolve_type_expr(ann)?;
-            if !types_compatible(&value_type, &expected) {
-                return Err(CompileError::new(Diagnostic::error(
-                    format!("type mismatch: expected {expected}, found {value_type}"),
-                    binding.value.span(),
-                )));
-            }
-        }
-
         let ty = if let Some(ann) = &binding.type_annotation {
-            self.resolve_type_expr(ann)?
+            let expected = self.resolve_type_expr(ann)?;
+            self.check(&binding.value, &expected)?;
+            expected
         } else {
-            value_type
+            self.synth(&binding.value)?
         };
 
         self.env.define(binding.name.clone(), ty, binding.mutable);
@@ -213,14 +203,7 @@ impl TypeChecker {
         }
 
         let expected = binding.ty.clone();
-        let value_type = self.synth(&assign.value)?;
-
-        if value_type != expected {
-            return Err(CompileError::new(Diagnostic::error(
-                format!("type mismatch: expected {expected}, found {value_type}"),
-                assign.value.span(),
-            )));
-        }
+        self.check(&assign.value, &expected)?;
 
         Ok(())
     }
@@ -280,7 +263,6 @@ impl TypeChecker {
             self.env
                 .define(tp.name.clone(), Type::TypeVar(tp.name.clone()), false);
 
-            // T: Add registers a temporary Add[T, T, T] instance for constraint checking
             for constraint in &tp.constraints {
                 let tc = self.env.lookup_typeclass(constraint).ok_or_else(|| {
                     CompileError::new(Diagnostic::error(
@@ -568,6 +550,38 @@ impl TypeChecker {
         Ok(())
     }
 
+    fn check(&mut self, expr: &Expr, expected: &Type) -> crate::errors::Result<()> {
+        if matches!(expected, Type::Unknown) {
+            self.synth(expr)?;
+            return Ok(());
+        }
+
+        match (expr, expected) {
+            (Expr::ListLiteral(elements, _), Type::List(elem_ty)) if elements.is_empty() => {
+                let _ = elem_ty; // type is determined by annotation
+                Ok(())
+            }
+
+            (Expr::ListLiteral(elements, _), Type::List(elem_ty)) => {
+                for elem in elements {
+                    self.check(elem, elem_ty)?;
+                }
+                Ok(())
+            }
+
+            _ => {
+                let actual = self.synth(expr)?;
+                if !types_compatible(&actual, expected) {
+                    return Err(CompileError::new(Diagnostic::error(
+                        format!("type mismatch: expected {expected}, found {actual}"),
+                        expr.span(),
+                    )));
+                }
+                Ok(())
+            }
+        }
+    }
+
     fn synth(&mut self, expr: &Expr) -> crate::errors::Result<Type> {
         match expr {
             Expr::IntLiteral(_, _) => Ok(Type::Int),
@@ -722,9 +736,16 @@ impl TypeChecker {
                     type_bindings.push((tp_name.clone(), Type::None));
                 }
 
+
                 let mut arg_types = Vec::new();
-                for arg in &call.args {
-                    arg_types.push(self.synth(arg)?);
+                for (i, arg) in call.args.iter().enumerate() {
+                    let param_ty = &func_ty.param_types[i];
+                    if !matches!(param_ty, Type::TypeVar(_)) && func_ty.type_params.is_empty() {
+                        self.check(arg, param_ty)?;
+                        arg_types.push(param_ty.clone());
+                    } else {
+                        arg_types.push(self.synth(arg)?);
+                    }
                 }
 
                 for (arg_ty, param_ty) in arg_types.iter().zip(func_ty.param_types.iter()) {
@@ -765,19 +786,6 @@ impl TypeChecker {
                 let mut result_type = *func_ty.return_type.clone();
                 for (tp_name, concrete) in &type_bindings {
                     result_type = self.substitute_typevar(&result_type, tp_name, concrete);
-                }
-
-                if func_ty.type_params.is_empty() {
-                    for (arg_ty, expected_ty) in arg_types.iter().zip(func_ty.param_types.iter()) {
-                        if !types_compatible(arg_ty, expected_ty) {
-                            return Err(CompileError::new(Diagnostic::error(
-                                format!(
-                                    "argument type mismatch: expected {expected_ty}, found {arg_ty}"
-                                ),
-                                call.span,
-                            )));
-                        }
-                    }
                 }
 
                 Ok(result_type)
@@ -1051,7 +1059,6 @@ mod tests {
 
     #[test]
     fn test_constrained_generic_missing_instance() {
-        // Bool has no Add instance, so calling double(True) should fail
         let input = "def double[T: Add](x: T) -> T:\n    return x + x\ndouble(True)\n";
         let result = check(input);
         assert!(result.is_err());
@@ -1060,7 +1067,6 @@ mod tests {
 
     #[test]
     fn test_unconstrained_generic_rejects_operator() {
-        // T without Add constraint cannot use +
         let input = "def double[T](x: T) -> T:\n    return x + x\n";
         let result = check(input);
         assert!(result.is_err());
@@ -1069,7 +1075,6 @@ mod tests {
 
     #[test]
     fn test_cross_type_operator() {
-        // Str * Int -> Str (different input and output types)
         let input = "typeclass Repeat[T, N, Out]:\n    def repeat(self: T, n: N) -> Out\nimpl Repeat[Str, Int, Str]:\n    def repeat(self: Str, n: Int) -> Str:\n        return self\n";
         assert!(check(input).is_ok());
     }
@@ -1115,5 +1120,37 @@ mod tests {
         let result = check(input);
         assert!(result.is_err());
         assert!(result.unwrap_err().diagnostic.message.contains("unknown type"));
+    }
+
+    #[test]
+    fn test_bidir_empty_list_with_annotation() {
+        let input = "let xs: List[Int] = []\n";
+        assert!(check(input).is_ok());
+    }
+
+    #[test]
+    fn test_bidir_empty_list_no_annotation_fails() {
+        let input = "let xs = []\n";
+        assert!(check(input).is_err());
+    }
+
+    #[test]
+    fn test_bidir_list_annotation_checks_elements() {
+        let input = "let xs: List[Int] = [1, 2, 3]\n";
+        assert!(check(input).is_ok());
+    }
+
+    #[test]
+    fn test_bidir_list_element_mismatch() {
+        let input = "let xs: List[Int] = [1, \"hello\"]\n";
+        let result = check(input);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().diagnostic.message.contains("type mismatch"));
+    }
+
+    #[test]
+    fn test_bidir_func_arg_list() {
+        let input = "def first(xs: List[Int]) -> Int:\n    return xs[0]\nlet x: Int = first([1, 2, 3])\n";
+        assert!(check(input).is_ok());
     }
 }
