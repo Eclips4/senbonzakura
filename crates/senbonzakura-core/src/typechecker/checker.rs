@@ -160,6 +160,7 @@ impl TypeChecker {
             Statement::TypeclassDecl(tc) => self.check_typeclass_decl(tc),
             Statement::Impl(impl_block) => self.check_impl_block(impl_block),
             Statement::For(for_stmt) => self.check_for_stmt(for_stmt),
+            Statement::While(while_stmt) => self.check_while_stmt(while_stmt),
             Statement::Import(import) => self.check_import(import),
         }
     }
@@ -501,6 +502,23 @@ impl TypeChecker {
 
         let child = std::mem::replace(&mut self.env, Environment::new());
         self.env = child.into_parent().unwrap();
+        Ok(())
+    }
+
+    fn check_while_stmt(&mut self, while_stmt: &WhileStmt) -> crate::errors::Result<()> {
+        let cond_ty = self.synth(&while_stmt.condition)?;
+
+        if cond_ty != Type::Bool && cond_ty != Type::Unknown {
+            return Err(CompileError::new(Diagnostic::error(
+                format!("condition of while loop must be a Bool, but found {cond_ty}"),
+                while_stmt.condition.span(),
+            )));
+        }
+
+        for stmt in &while_stmt.body {
+            self.check_statement(stmt)?;
+        }
+
         Ok(())
     }
 

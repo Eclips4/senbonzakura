@@ -542,4 +542,22 @@ mod tests {
             ]
         );
     }
+
+    #[test]
+    fn test_while() {
+        assert_eq!(
+            kinds("while True:\n    42\n"),
+            vec![
+                TokenKind::KwWhile,
+                TokenKind::KwTrue,
+                TokenKind::Colon,
+                TokenKind::Newline,
+                TokenKind::Indent,
+                TokenKind::IntLit,
+                TokenKind::Newline,
+                TokenKind::Dedent,
+                TokenKind::Eof,
+            ]
+        );
+    }
 }
