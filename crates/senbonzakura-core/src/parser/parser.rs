@@ -45,6 +45,7 @@ impl<'a> Parser<'a> {
             TokenKind::KwTypeclass => self.parse_typeclass_decl().map(Statement::TypeclassDecl),
             TokenKind::KwImpl => self.parse_impl_block().map(Statement::Impl),
             TokenKind::KwFor => self.parse_for_stmt().map(Statement::For),
+            TokenKind::KwWhile => self.parse_while_stmt().map(Statement::While),
             TokenKind::KwImport => self.parse_import_stmt().map(Statement::Import),
             TokenKind::KwFrom => self.parse_from_import_stmt().map(Statement::Import),
             _ => self.parse_expr_or_assign(),
@@ -443,6 +444,22 @@ impl<'a> Parser<'a> {
         Ok(ForStmt {
             var_name,
             iterable,
+            body,
+            span: Span::new(start.start, end.end),
+        })
+    }
+
+    fn parse_while_stmt(&mut self) -> crate::errors::Result<WhileStmt> {
+        let start = self.current_span();
+        self.advance();
+
+        let condition = self.parse_expr()?;
+        self.expect(TokenKind::Colon)?;
+        let body = self.parse_block()?;
+        let end = self.current_span();
+
+        Ok(WhileStmt {
+            condition,
             body,
             span: Span::new(start.start, end.end),
         })
@@ -961,6 +978,23 @@ mod tests {
                 assert!(stmt.else_body.is_some());
             }
             _ => panic!("expected if stmt"),
+        }
+    }
+
+    #[test]
+    fn test_while() {
+        let module = parse("while a > 0:\n    42");
+
+        match &module.body[0] {
+            Statement::While(stmt) => {
+                if let Expr::BinOp(bin_op) = &stmt.condition {
+                    assert_eq!(bin_op.op, BinOp::Gt);
+                } else {
+                    panic!("Expected binary operation in while condition");
+                }
+                    assert_eq!(stmt.body.len(), 1);
+            }
+            _ => panic!("expected while stmt"),
         }
     }
 

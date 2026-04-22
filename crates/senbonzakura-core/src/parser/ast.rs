@@ -18,6 +18,7 @@ pub enum Statement {
     TypeclassDecl(TypeclassDecl),
     Impl(ImplBlock),
     For(ForStmt),
+    While(WhileStmt),
     Import(ImportStmt),
 }
 
@@ -134,6 +135,13 @@ pub enum ImplKind {
 pub struct ForStmt {
     pub var_name: String,
     pub iterable: Expr,
+    pub body: Vec<Statement>,
+    pub span: Span,
+}
+
+#[derive(Debug, Clone)]
+pub struct WhileStmt {
+    pub condition: Expr,
     pub body: Vec<Statement>,
     pub span: Span,
 }

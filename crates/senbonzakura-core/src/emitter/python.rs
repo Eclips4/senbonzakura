@@ -37,6 +37,7 @@ impl PythonEmitter {
                     }
             Statement::Impl(impl_block) => self.emit_impl_block(impl_block),
             Statement::For(for_stmt) => self.emit_for(for_stmt),
+            Statement::While(while_stmt) => self.emit_while(while_stmt),
             Statement::Import(import) => self.emit_import(import),
         }
     }
@@ -183,6 +184,19 @@ impl PythonEmitter {
 
         self.indent += 1;
         for stmt in &for_stmt.body {
+            self.emit_statement(stmt);
+        }
+        self.indent -= 1;
+    }
+
+    fn emit_while(&mut self, while_stmt: &WhileStmt) {
+        self.write_indent();
+        self.output.push_str("while ");
+        self.emit_expr(&while_stmt.condition);
+        self.output.push_str(":\n");
+
+        self.indent += 1;
+        for stmt in &while_stmt.body {
             self.emit_statement(stmt);
         }
         self.indent -= 1;
@@ -482,6 +496,15 @@ mod tests {
     fn test_string_literal() {
         let output = compile("let x: Str = \"hello\\nworld\"\n");
         assert!(output.contains(r#"x = "hello\nworld""#));
+    }
+
+    #[test]
+    fn test_while_loop_translation() {
+        let input = "while True:\n    let x: Int = 42\n";
+                let output = compile(input);
+
+        assert!(output.contains("while True:"));
+        assert!(output.contains("    x = 42"));
     }
 
     #[test]
