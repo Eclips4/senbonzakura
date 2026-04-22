@@ -7,7 +7,6 @@ proof/.lake/
 proof/.github/
 proof/README.md
 
-tree-sitter-senbonzakura/src/
 tree-sitter-senbonzakura/node_modules/
 
 learning/

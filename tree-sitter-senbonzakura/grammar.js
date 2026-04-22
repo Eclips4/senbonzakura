@@ -21,6 +21,8 @@ module.exports = grammar({
         $.typeclass_decl,
         $.impl_block,
         $.if_statement,
+        $.for_statement,
+        $.while_statement,
         $.return_statement,
         $.import_statement,
         $.from_import_statement,
@@ -100,6 +102,14 @@ module.exports = grammar({
 
     else_clause: ($) =>
       seq("else", ":", field("body", $.block)),
+
+    for_statement: ($) =>
+      prec.right(seq("for", field("item", $.identifier), "in", field("iterable", $._expression), ":",
+        field("body", $.block))),
+
+    while_statement: ($) =>
+      prec.right(seq("while", field("condition", $._expression), ":",
+        field("body", $.block))),
 
     return_statement: ($) =>
       prec.right(seq("return", optional(field("value", $._expression)))),

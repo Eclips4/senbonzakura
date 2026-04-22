@@ -1,0 +1,67 @@
+==================
+For loop basic
+==================
+for i in items:
+    return i
+---
+
+(source_file
+  (for_statement
+    item: (identifier)
+    iterable: (primary_expression (identifier))
+    body: (block
+      (return_statement
+        value: (primary_expression (identifier))))))
+
+==================
+For loop with range-like call
+==================
+for x in range(10):
+    x = 1
+---
+
+(source_file
+  (for_statement
+    item: (identifier)
+    iterable: (call_expression
+        callee: (primary_expression (identifier))
+        (primary_expression (integer)))
+    body: (block
+      (assignment
+        target: (primary_expression (identifier))
+        value: (primary_expression (integer))))))
+
+==================
+For loop with complex iterable
+==================
+for item in data.items:
+    return
+---
+
+(source_file
+  (for_statement
+    item: (identifier)
+    iterable: (attribute_access
+        object: (primary_expression (identifier))
+        attribute: (identifier))
+    body: (block
+      (return_statement))))
+
+==================
+While nested in For
+==================
+for i in list:
+    while True:
+        return i
+---
+
+(source_file
+  (for_statement
+    item: (identifier)
+    iterable: (primary_expression (identifier))
+    body: (block
+      (while_statement
+        condition: (primary_expression (boolean))
+        body: (block
+          (return_statement
+            value: (primary_expression (identifier))))))))
