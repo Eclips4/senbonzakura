@@ -8,6 +8,9 @@
 "if" @keyword
 "elif" @keyword
 "else" @keyword
+"for" @keyword
+"in" @keyword
+"while" @keyword
 "return" @keyword
 "import" @keyword
 "from" @keyword
