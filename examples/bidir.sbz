@@ -1,0 +1,2 @@
+let ys: List[Int] = []  # Must not fail, the type is being pushed downwards
+print(ys)
