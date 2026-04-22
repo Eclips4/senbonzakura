@@ -1,0 +1,64 @@
+==================
+While Loop
+==================
+while True:
+    x = 1
+---
+
+(source_file
+  (while_statement
+    condition: (primary_expression (boolean))
+    body: (block
+      (assignment
+        target: (primary_expression (identifier))
+        value: (primary_expression (integer))))))
+
+==================
+While loop with comparison
+==================
+while x < 10:
+    x = x + 1
+---
+
+(source_file
+  (while_statement
+    condition: (binary_expression
+      (primary_expression (identifier))
+      (primary_expression (integer)))
+    body: (block
+      (assignment
+        target: (primary_expression (identifier))
+        value: (binary_expression
+          (primary_expression (identifier))
+          (primary_expression (integer)))))))
+
+==================
+Empty while loop
+==================
+while True:
+    return
+---
+
+(source_file
+  (while_statement
+    condition: (primary_expression (boolean))
+    body: (block
+      (return_statement))))
+
+==================
+Nested loops
+==================
+while True:
+    for i in list:
+        return
+---
+
+(source_file
+  (while_statement
+    condition: (primary_expression (boolean))
+    body: (block
+      (for_statement
+        item: (identifier)
+        iterable: (primary_expression (identifier))
+        body: (block
+          (return_statement))))))
