@@ -1,0 +1,24 @@
+name: Sync highlights to Zed extension
+
+on:
+  push:
+    paths:
+      - 'tree-sitter-senbonzakura/queries/highlights.scm'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Push highlights to zed-senbonzakura
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.ZED_EXT_TOKEN }}
+        with:
+          source_file: 'tree-sitter-senbonzakura/queries/highlights.scm'
+          destination_repo: 'Toshiim/zed-senbonzakura'
+          destination_folder: 'languages/senbonzakura'
+          user_email: 'tgoncharukivan@gmail.com'
+          user_name: 'Toshiim'
+          commit_message: 'chore: sync highlights.scm from monorepo'
