@@ -60,7 +60,6 @@
 ">=" @operator
 "=" @operator
 "->" @operator
-"%" @operator
 
 ; Punctuation
 "(" @punctuation.bracket
