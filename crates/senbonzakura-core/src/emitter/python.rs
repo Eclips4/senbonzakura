@@ -255,6 +255,7 @@ impl PythonEmitter {
             ("sub", "__sub__"),
             ("mul", "__mul__"),
             ("div", "__truediv__"),
+            ("mod", "__mod__"),
             ("eq", "__eq__"),
             ("lt", "__lt__"),
         ];
@@ -384,6 +385,7 @@ impl PythonEmitter {
                     BinOp::Sub => " - ",
                     BinOp::Mul => " * ",
                     BinOp::Div => " / ",
+                    BinOp::Mod => " % ",
                     BinOp::Eq => " == ",
                     BinOp::NotEq => " != ",
                     BinOp::Lt => " < ",
@@ -465,6 +467,12 @@ mod tests {
     fn test_let_binding() {
         let output = compile("let x: Int = 42\n");
         assert_eq!(output.trim(), "x = 42");
+    }
+
+    #[test]
+    fn test_module_operator(){
+        let output = compile("let x: Int = 7 % 2\n");
+        assert_eq!(output.trim(), "x = (7 % 2)");
     }
 
     #[test]

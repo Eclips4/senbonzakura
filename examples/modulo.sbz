@@ -1,0 +1,37 @@
+data Point:
+    x: Int
+    y: Int
+
+
+impl Mod[Point, Point, Point]:
+    def mod(self: Point, other: Point) -> Point:
+        return Point(self.x % other.x, self.y % other.y)
+
+
+def isOdd(number: Int) -> Bool:
+    if number % 2 == 0:
+        return True
+
+    return False
+
+let odd:Bool = isOdd(4)
+let even:Bool = isOdd(3)
+
+if (odd):
+    print("Odd num is odd. OK!")
+else:
+    print("Error! Odd num is not odd.")
+
+if not even:
+    print("Not odd num is not odd. OK!")
+else:
+    print("Error! Not odd num is odd!")
+
+let p1:Point = Point(10, 10)
+let p2:Point = Point(3, 3)
+let result:Point = p1 % p2
+
+if result.x == 1 and result.y == 1:
+    print("Mod on custom type is working. OK!")
+else:
+   print("Error! Mod on custom type is not working.")

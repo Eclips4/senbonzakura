@@ -1,6 +1,7 @@
 /target
 __pycache__/
 *.pyc
+.idea/
 
 examples/*.py
 proof/.lake/

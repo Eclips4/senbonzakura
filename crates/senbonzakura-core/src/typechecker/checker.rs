@@ -31,6 +31,7 @@ fn op_to_typeclass(op: BinOp) -> Option<(&'static str, &'static str)> {
         BinOp::Sub => Some(("Sub", "sub")),
         BinOp::Mul => Some(("Mul", "mul")),
         BinOp::Div => Some(("Div", "div")),
+        BinOp::Mod => Some(("Mod", "mod")),
         BinOp::Eq | BinOp::NotEq => Some(("Eq", "eq")),
         BinOp::Lt | BinOp::Gt | BinOp::LtEq | BinOp::GtEq => Some(("Ord", "lt")),
         BinOp::And | BinOp::Or => None,
@@ -114,10 +115,11 @@ impl TypeChecker {
         register_builtin_typeclass(&mut env, "Sub", "sub");
         register_builtin_typeclass(&mut env, "Mul", "mul");
         register_builtin_typeclass(&mut env, "Div", "div");
+        register_builtin_typeclass(&mut env, "Mod", "mod");
         register_builtin_typeclass(&mut env, "Eq", "eq");
         register_builtin_typeclass(&mut env, "Ord", "lt");
 
-        for tc in &["Add", "Sub", "Mul", "Div"] {
+        for tc in &["Add", "Sub", "Mul", "Div", "Mod"] {
             register_builtin_instance(&mut env, tc, Type::Int, Type::Int, Type::Int);
             register_builtin_instance(&mut env, tc, Type::Float, Type::Float, Type::Float);
         }
@@ -1170,5 +1172,21 @@ mod tests {
     fn test_bidir_func_arg_list() {
         let input = "def first(xs: List[Int]) -> Int:\n    return xs[0]\nlet x: Int = first([1, 2, 3])\n";
         assert!(check(input).is_ok());
+    }
+
+    #[test]
+    fn test_modulo_on_expected_types() {
+        for (sbz_type, literal) in &[("Int", "5"), ("Float", "5.0")] {
+            let input = format!("let x:{sbz_type} = {literal}\nlet y:{sbz_type} = {literal}\nlet result = x % y\n");
+            assert!(check(&input).is_ok());
+        }
+    }
+
+    #[test]
+    fn test_modulo_on_unexpected_types() {
+        for sbzType in &["String"] {
+            let input = format!("let x:{sbzType} = 5\nlet y:{sbzType} = 2\nlet result = x % y\n");
+            assert!(check(&input).is_err());
+        }
     }
 }
