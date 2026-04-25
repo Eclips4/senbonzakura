@@ -224,6 +224,7 @@ pub enum BinOp {
     Mul,
     Div,
     Eq,
+    Mod,
     NotEq,
     Lt,
     Gt,

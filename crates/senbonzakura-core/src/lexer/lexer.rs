@@ -269,6 +269,7 @@ impl<'a> Lexer<'a> {
 
         let (kind, text) = match ch {
             '+' => (TokenKind::Plus, "+"),
+            '%' => (TokenKind::Percent, "%"),
             '*' => (TokenKind::Star, "*"),
             '/' => (TokenKind::Slash, "/"),
             '(' => (TokenKind::LParen, "("),
@@ -443,12 +444,13 @@ mod tests {
     #[test]
     fn test_operators() {
         assert_eq!(
-            kinds("+ - * / == != -> <= >="),
+            kinds("+ - * / % == != -> <= >="),
             vec![
                 TokenKind::Plus,
                 TokenKind::Minus,
                 TokenKind::Star,
                 TokenKind::Slash,
+                TokenKind::Percent,
                 TokenKind::EqEq,
                 TokenKind::BangEq,
                 TokenKind::Arrow,
