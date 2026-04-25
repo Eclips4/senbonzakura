@@ -19,14 +19,14 @@ inductive Ty where
   | prod : List Ty → Ty
 
 inductive BinOp where
-  | add | sub | mul | div
+  | add | sub | mul | div | mod
   | eq | lt
   | and | or
   deriving DecidableEq, Repr
 
 /-- and/or are control flow, not overloadable via instances. -/
 def BinOp.isOverloadable : BinOp → Bool
-  | .add | .sub | .mul | .div | .eq | .lt => true
+  | .add | .sub | .mul | .div | .mod | .eq | .lt => true
   | .and | .or => false
 
 structure InstanceEntry where

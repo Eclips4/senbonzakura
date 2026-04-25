@@ -35,6 +35,7 @@ def evalIntOp (op : BinOp) (a b : Int) : Option Expr :=
   | .sub => some (Expr.intLit (a - b))
   | .mul => some (Expr.intLit (a * b))
   | .div => if b ≠ 0 then some (Expr.intLit (a / b)) else none
+  | .mod => if b ≠ 0 then some (Expr.intLit (a % b)) else none
   | .eq  => some (Expr.boolLit (a == b))
   | .lt  => some (Expr.boolLit (decide (a < b)))
   | _ => none
