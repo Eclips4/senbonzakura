@@ -1,0 +1,50 @@
+name: Sync artifacts to VS Code extension
+
+on:
+  push:
+    paths:
+      - 'tree-sitter-senbonzakura/queries/highlights.scm'
+      - 'tree-sitter-senbonzakura/grammar.js'
+      - 'tree-sitter-senbonzakura/src/**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tree-sitter CLI
+        run: npm install -g tree-sitter-cli
+
+      - name: Install Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+
+      - name: Build WASM
+        run: |
+          cd tree-sitter-senbonzakura
+          tree-sitter build --wasm
+          mv tree-sitter-senbonzakura.wasm ../
+
+      - name: Push highlights.scm to vscode-senbonzakura
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.ZED_EXT_TOKEN }}
+        with:
+          source_file: 'tree-sitter-senbonzakura/queries/highlights.scm'
+          destination_repo: 'Toshiim/vscode-senbonzakura'
+          destination_folder: '.'
+          user_email: 'tgoncharukivan@gmail.com'
+          user_name: 'Toshiim'
+          commit_message: 'chore: sync highlights.scm from monorepo'
+
+      - name: Push WASM to vscode-senbonzakura
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.ZED_EXT_TOKEN }}
+        with:
+          source_file: 'tree-sitter-senbonzakura.wasm'
+          destination_repo: 'Toshiim/vscode-senbonzakura'
+          destination_folder: '.'
+          user_email: 'tgoncharukivan@gmail.com'
+          user_name: 'Toshiim'
+          commit_message: 'chore: sync tree-sitter WASM from monorepo'
