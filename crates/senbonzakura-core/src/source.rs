@@ -1,5 +1,7 @@
 use std::fmt;
+use std::io::{Error, ErrorKind};
 use std::path::{Path, PathBuf};
+use encoding_rs::{Encoding};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Position {
@@ -47,7 +49,9 @@ pub struct SourceFile {
 
 impl SourceFile {
     pub fn from_path(path: &Path) -> std::io::Result<Self> {
-        let content = std::fs::read_to_string(path)?;
+        let file_bytes = std::fs::read(path)?;
+        let content = SourceFile::read_content_from_bytes(file_bytes)?;
+
         let lines = content.lines().map(String::from).collect();
         Ok(Self {
             path: path.to_path_buf(),
@@ -63,5 +67,22 @@ impl SourceFile {
             content: content.to_string(),
             lines,
         }
+    }
+
+    fn read_content_from_bytes(bytes: Vec<u8>) -> std::io::Result<String> {
+        SourceFile::validate_no_bom(&bytes)?;
+
+        let content = String::from_utf8(bytes)
+            .map_err(|_| Error::new(ErrorKind::InvalidInput, "Source file contains invalid UTF8"))?;
+
+        Ok(content)
+    }
+
+    fn validate_no_bom(bytes: &Vec<u8>) -> std::io::Result<()> {
+        if Encoding::for_bom(bytes).is_some() {
+            return Err(Error::new(ErrorKind::InvalidInput, "Source file has BOM"));
+        }
+
+        Ok(())
     }
 }
